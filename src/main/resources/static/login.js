@@ -1,12 +1,15 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch("/auth/checkAttempts")
-        .then(response => response.json())
-        .then(data => {
-            if (data.attempts >= 3) {
-                document.getElementById("captchaDiv").style.display = "block";
-                document.getElementById("captchaImage").src = "/captcha";
-            }
-        });
+    fetch("api/captcha/generate").then(response => response.json()).then(data => {
+        document.getElementById("captchaImage").src = data.image;
+    })
+    // fetch("/auth/checkAttempts")
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.attempts >= 3) {
+    //             document.getElementById("captchaDiv").style.display = "block";
+    //             document.getElementById("captchaImage").src = "/captcha";
+    //         }
+    //     });
 
     document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
@@ -20,19 +23,19 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("password", password);
         formData.append("captcha", captcha);
 
-        fetch("/auth/login", {
+        fetch("api/captcha/validate", {
             method: "POST",
             body: formData,
             headers: { "Content-Type": "application/x-www-form-urlencoded" }
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById("message").textContent = data.message;
+            document.getElementById("message").textContent = data.status;
 
-            if (data.status === "error") {
-                if (data.message.includes("CAPTCHA")) {
-                    document.getElementById("captchaImage").src = "/captcha"; // Reload CAPTCHA
-                }
+            if (data.status === "fail") {
+				fetch("api/captcha/generate").then(response => response.json()).then(data => {
+				        document.getElementById("captchaImage").src = data.image;
+					})
             }
         });
     });

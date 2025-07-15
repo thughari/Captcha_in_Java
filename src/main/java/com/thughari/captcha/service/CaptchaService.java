@@ -70,7 +70,7 @@ public class CaptchaService {
     
     public boolean validateCaptcha(HttpServletRequest httpServletRequest) {
     	String clientIp = getClientIp(httpServletRequest);
-    	String incomingCaptcha = (String) httpServletRequest.getHeader("captcha");
+    	String incomingCaptcha = (String) httpServletRequest.getParameter("captcha");
     	return captchaMapWithIP.get(clientIp).equals(incomingCaptcha);
     }
     

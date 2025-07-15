@@ -40,6 +40,7 @@ public class CaptchaController {
     public ResponseEntity<Map<String, String>> validateCaptcha(HttpServletRequest httpServletRequest) {
         String storedCaptcha = (String) httpServletRequest.getHeader("captcha");
         System.out.println(storedCaptcha);
+        System.out.println(httpServletRequest.getParameter("captcha"));
         boolean isValid = captchaService.validateCaptcha(httpServletRequest);
         Map<String, String> response = new HashMap<>();
         response.put("status", isValid ? "success" : "fail");
